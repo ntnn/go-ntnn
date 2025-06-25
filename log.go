@@ -15,6 +15,15 @@ var (
 	LogToFile = ""
 )
 
+func init() {
+	if LogToFile != "" {
+		// Ensure the log file exists
+		f, err := os.OpenFile(LogToFile, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
+		Panicf("error opening LogToFile", err)
+		Panic(f.Close())
+	}
+}
+
 func printer(format string, s ...any) {
 	if !strings.HasSuffix(format, "\n") {
 		format += "\n"
