@@ -20,9 +20,20 @@ func init() {
 	if LogToFile != "" {
 		// Ensure the log file exists
 		f, err := os.OpenFile(LogToFile, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
-		Panicf("error opening LogToFile", err)
-		Panic(f.Close())
+		panicif(err)
+		panicfn(f.Close)
 	}
+}
+
+func panicif(err error) {
+	if err == nil {
+		return
+	}
+	panic(err)
+}
+
+func panicfn(fn func() error) {
+	panicif(fn())
 }
 
 func printer(msg string) {
@@ -36,7 +47,7 @@ func printer(msg string) {
 
 	if LogToFile == "" {
 		_, err := fmt.Print(Marker + " " + msg)
-		Panic(err)
+		panicif(err)
 		return
 	}
 
@@ -44,11 +55,11 @@ func printer(msg string) {
 	defer fileLock.Unlock()
 
 	f, err := os.OpenFile(LogToFile, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
-	Panic(err)
-	defer Panic(f.Close())
+	panicif(err)
+	defer panicfn(f.Close)
 
 	_, err = f.WriteString(msg)
-	Panic(err)
+	panicif(err)
 }
 
 func Log(msg string) {

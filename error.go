@@ -22,8 +22,12 @@ func Panic(err error) {
 	if err == nil {
 		return
 	}
-	Logf("error: %v", err)
+	Logf("panic: %v", err)
 	panic(err)
+}
+
+func PanicFn(fn func() error) {
+	Panic(fn())
 }
 
 func Panicf(message string, err error) {
@@ -32,4 +36,8 @@ func Panicf(message string, err error) {
 	}
 	Logf("%s: %v", message, err)
 	panic(err)
+}
+
+func PanicfFn(msg string, fn func() error) {
+	Panicf(msg, fn())
 }
