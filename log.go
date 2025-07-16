@@ -9,10 +9,15 @@ import (
 )
 
 var (
-	Marker     = "###>"
+	// Marker is the prefix used for log messages going to stdout.
+	Marker = "###>"
+	// EnableLogs allows to globally enable or disable logging.
 	EnableLogs = true
 
-	fileLock  sync.Mutex
+	fileLock sync.Mutex
+	// LogToFile is the path to a file where logs will be written.
+	// Mostly useful if the application being debugged is very noisy and
+	// the interesting parts should be separated.
 	LogToFile = ""
 )
 
@@ -62,10 +67,13 @@ func printer(msg string) {
 	panicif(err)
 }
 
+// Log prints a message to stdout or to a file if LogToFile is set.
 func Log(msg string) {
 	printer(msg)
 }
 
+// Logf prints a formatted message to stdout or to a file if LogToFile
+// is set.
 func Logf(format string, args ...any) {
 	printer(fmt.Sprintf(format, args...))
 }

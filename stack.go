@@ -50,12 +50,22 @@ func LogCallers() {
 	Log(strings.Join(s, "\n"))
 }
 
+// Stack returns the current stack trace as a string.
 func Stack() string {
 	buf := make([]byte, 16*1024)
 	runtime.Stack(buf, false)
 	return string(bytes.Trim(buf, "\x00")) + "\n\n"
 }
 
+// DumpStackToFile dumps the current stack trace to a file at the
+// specified path.
+//
+// preStack can be left empty. If it is not empty it will be dumped to
+// the file before the current stack trace. Useful when tracing origins
+// and uses of a private function or callback.
+//
+// additionalInfo can be left empty. If it is not empty it will be
+// written between the preStack and the current stack trace.
 func DumpStackToFile(path, preStack, additionalInfo string) {
 	curStack := Stack()
 

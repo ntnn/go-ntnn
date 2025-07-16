@@ -7,6 +7,8 @@ import (
 	"time"
 )
 
+// StartProfileServer starts the pprof server on an unused port and
+// returns the address and a function to stop the server.
 func StartProfileServer(profile string) (string, func()) {
 	server := &http.Server{
 		Addr:    fmt.Sprintf("localhost:%d", UnusedPort()),
@@ -16,6 +18,8 @@ func StartProfileServer(profile string) (string, func()) {
 	return server.Addr, func() { Errorf(server.Close(), "error closing http server") }
 }
 
+// StartProfileServerAndStall calls StartProfileServer, logs the address
+// and stalls indefinitely.
 func StartProfileServerAndStall(profile string) {
 	addr, stop := StartProfileServer(profile)
 	defer stop()
@@ -23,8 +27,12 @@ func StartProfileServerAndStall(profile string) {
 	time.Sleep(99999 * time.Minute)
 }
 
+// DumpProfileTraceSeconds is the default number of seconds to collect
+// when collecting the trace profile.
 var DumpProfileTraceSeconds = "10"
 
+// DumpToFile starts the pprof server, fetches the given profile and
+// dumps it to the specified file.
 func DumpProfile(profile, pathPrefix string) {
 	Log("starting server to dump")
 	addr, stop := StartProfileServer(profile)
