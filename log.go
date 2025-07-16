@@ -24,13 +24,17 @@ func init() {
 	}
 }
 
-func printer(format string, s ...any) {
-	if !strings.HasSuffix(format, "\n") {
-		format += "\n"
+func printer(msg string) {
+	if !EnableLogs {
+		return
+	}
+
+	if !strings.HasSuffix(msg, "\n") {
+		msg += "\n"
 	}
 
 	if LogToFile == "" {
-		_, err := fmt.Printf(Marker+" "+format, s...)
+		_, err := fmt.Print(Marker + " " + msg)
 		Panic(err)
 		return
 	}
@@ -40,22 +44,16 @@ func printer(format string, s ...any) {
 
 	f, err := os.OpenFile(LogToFile, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
 	Panic(err)
-	defer f.Close()
+	defer Panic(f.Close())
 
-	_, err = f.WriteString(fmt.Sprintf(format, s...))
+	_, err = f.WriteString(msg)
 	Panic(err)
 }
 
-func Log(s string) {
-	if !EnableLogs {
-		return
-	}
-	printer(s)
+func Log(msg string) {
+	printer(msg)
 }
 
 func Logf(format string, args ...any) {
-	if !EnableLogs {
-		return
-	}
-	printer(format, args...)
+	printer(fmt.Sprintf(format, args...))
 }
