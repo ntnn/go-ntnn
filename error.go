@@ -12,6 +12,12 @@ func Error(err error) bool {
 	return true
 }
 
+// ErrorFn executes the provided function and passes its error result to
+// Error.
+func ErrorFn(fn func() error) bool {
+	return Error(fn())
+}
+
 // Errorf returns false if the error is nil, otherwise it logs the
 // provided format and arguments with the error appended and returns
 // true.
@@ -33,7 +39,7 @@ func Panic(err error) {
 	panic(err)
 }
 
-// PanicFn executed the provided function and passes its error result to
+// PanicFn executes the provided function and passes its error result to
 // Panic.
 func PanicFn(fn func() error) {
 	Panic(fn())
