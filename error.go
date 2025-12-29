@@ -18,6 +18,12 @@ func ErrorFn(fn func() error) bool {
 	return Error(fn())
 }
 
+// ErrorFnV is like ErrorFn but for functions that expect exactly one
+// argument.
+func ErrorFnV[T any](t T, fn func(T) error) bool {
+	return Error(fn(t))
+}
+
 // Errorf returns false if the error is nil, otherwise it logs the
 // provided format and arguments with the error appended and returns
 // true.
